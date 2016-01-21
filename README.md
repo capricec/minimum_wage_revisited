@@ -8,7 +8,7 @@ had differed from the federal wage. This time, I hoped to target that relationsh
 As all economic questions go, it is hard to completely isolate the variables from time, especially with the idea of leading or 
 lagging indicators. Rather than have time as one of my main axes, I used the animation to show the relationship between the two variables
 over time (starting in 1980). On the data side of things, in order to remove distortion due to the effects of inflation over the time 
-period, I indexed the historical nominal minimum wage to 2014 dollars and have presented Real Minimum Wage. 
+period, I indexed the historical nominal minimum wage to 2014 dollars. 
 
 The files included here are what I used in the process. 
 
