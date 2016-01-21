@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+  <canvas id = "xAxis"  width = "30px" height = "720px" top ="0px" left = "0px"></canvas>
+  <canvas id = "yAxis" width = "826px" height = "55px" top = "800px" left = "30px"></canvas>
+  <div id = "chart1"></div>
+  <div id = "chart2"></div>
+  <div id = "chart3"></div>
+  <div id = "chart4"></div>
+  <div id = "chart5"></div>
+  <div id = "chart6"></div>
+  <div id = "chart7"></div>
+  <div id = "chart8"></div>
+  <div id = "chart9"></div>
+  
+    <style>  
+
+canvas#yAxis{
+  fill: #C9491E;
+  position:absolute;
+  top:652px;
+  left:30px;
+}
+  
+div#chart1{
+  position:absolute;
+  left:30px;
+  top:0px;
+}  
+  
+div#chart2{
+  position:absolute;
+  left:280px;
+  top:0px;
+}
+
+div#chart3{
+  position:absolute;
+  left:530px;
+  top:0px;
+}   
+
+div#chart4{
+  position:absolute;
+  left:30px;
+  top:220px;
+} 
+
+div#chart5{
+  position:absolute;
+  left:280px;
+  top:220px;
+} 
+
+div#chart6{
+  position:absolute;
+  left:530px;
+  top:220px;
+}  
+
+div#chart7{
+  position:absolute;
+  left:30px;
+  top:440px;
+} 
+
+div#chart8{
+  position:absolute;
+  left:280px;
+  top:440px;
+} 
+
+div#chart9{
+  position:absolute;
+  left:530px;
+  top:440px;
+}  
+    
+    body {
+  font: 7.5px arial;
+}
+
+.axis path,
+    .axis line {
+      fill: none;
+      stroke: none;
+      shape-rendering: crispEdges;
+    } 
+
+text.label{
+  font-family: 'Arial Narrow';
+  font-size: 8.5px;
+}
+
+text.yearlabel{
+  font-family: 'Arial Narrow';
+  font-size: 8px;
+}
+
+text.label{
+  fill: none;
+}
+
+div#chart1 text.label{
+    font-weight: 700;
+    fill: #C9491E;
+  }
+
+text.statename{
+  font-size: 9px;
+  font-weight: 550;
+  fill: #87B4C1;
+}
+
+    </style>
+
+<script type="text/javascript">
+
+
+var colord = "#911A00";
+var c = document.getElementById("xAxis");
+var ctx = c.getContext("2d");
+    ctx.fillStyle = colord;
+    ctx.moveTo(7,540);
+    ctx.lineTo(7,40);
+    ctx.strokeStyle = colord;
+    ctx.stroke();
+    ctx.save();
+    ctx.translate(0, 590);
+    ctx.rotate(-Math.PI/2);
+    ctx.textAlign = "center";
+    ctx.font = "12px Arial";
+    ctx.fillText("Poverty Rate \u2192",0,10);
+    ctx.restore();
+
+
+var d = document.getElementById("yAxis");
+var dtx = d.getContext("2d");
+    dtx.strokeStyle = colord;
+    dtx.fillStyle = colord;
+    dtx.moveTo(140,10);
+    dtx.lineTo(695,10);
+    dtx.stroke();
+    dtx.textAlign = "center";
+    dtx.font = "12px Arial";
+    dtx.fillText("Real Minimum Wage \u2192",73,13);
+
+
+ var filtdata = [];
+ var formatP = d3.format(".1%");
+ var formatW = d3.format("$,.1f");
+ var states = ["Arkansas", "New Mexico", "Mississippi", "Georgia", "South Dakota", "California", "Wyoming", "Delaware", "Connecticut"];
+ 
+ function draw(data) {
+
+   for(i=0; i<9; i++){
+   
+   function filt(d){
+     if (d['State'] == states[i]){
+     return d;
+      };
+    };
+   
+   filtdata = data.filter(filt);
+    
+   filtdata.sort(function(a,b) { return parseFloat(a.Year) - parseFloat(b.Year); });
+   
+   var maxP = Math.max.apply(Math,filtdata.map(function(o){return o.Percent;}));
+   var minP = Math.min.apply(Math,filtdata.map(function(o){return o.Percent;}));
+   
+   var maxW = Math.max.apply(Math,filtdata.map(function(o){return o.RealWage;}));
+   var minW = Math.min.apply(Math,filtdata.map(function(o){return o.RealWage;}));
+     
+   var xticks = [minW, (minW+maxW)/2, maxW];
+   var yticks = [minP, (minP+maxP)/2, maxP];
+   
+          "use strict";
+      var margin = {top: 30, right: 30, bottom: 40, left: 40},
+      width = 250 - margin.left - margin.right,
+      height = 220 - margin.top - margin.bottom;
+
+
+      var x = d3.scale.linear()
+          .domain([2,11])
+          .range([0, width]);
+
+      var y = d3.scale.linear()
+          .domain([.04, .28])
+          .range([height, 0]);
+
+      var xAxis = d3.svg.axis()
+          .scale(x)
+          .orient("bottom")
+        //  .tickSize(3)
+          //.ticks(12)
+          .tickFormat(formatW)
+          .tickValues(xticks);
+
+      var yAxis = d3.svg.axis()
+          .scale(y)
+          .orient("left")
+          //.ticks(10)
+          .tickFormat(d3.format("%"))
+          //.tickSize(3)
+          .tickValues(yticks);
+
+
+      var svg = d3.select("#chart" + (i+1) ).append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            .attr('class','chart')
+            .style("fill", "#8E8E8E");
+
+      svg.append("g")
+           .attr("class", "x axis")
+           .attr("transform", "translate(0," + height + ")")
+           .call(xAxis)
+           .append("text")
+          .attr("class", "label")
+          .attr("x", -16)
+          .attr("y", 13)
+           .text("Real Minimum Wage \u2192");
+
+      svg.append("g")
+          .attr("class", "y axis")
+          .attr("transform", "translate(0 ,0)")
+          .call(yAxis)
+          .append("text")
+         .attr("class", "label")
+         .attr("transform", "rotate(-90)")
+         .attr("x", -height - 5 )
+         .attr("y", -18)
+          .text("Poverty Rate \u2192");
+
+      svg.selectAll("line.x")
+        .data(xticks)
+        .enter().append("line")
+        .attr("class", "x")
+        .attr("x1", x)
+        .attr("x2", x)
+        .attr("y1", 0)
+        .attr("y2", height)
+        .style("stroke", "#EAEAEA");
+
+        svg.selectAll("line.y")
+          .data(yticks)
+          .enter().append("line")
+          .attr("class", "x")
+          .attr("x1", 0)
+          .attr("x2", width)
+          .attr("y1", y)
+          .attr("y2", y)
+          .style("stroke", "#EAEAEA");
+
+      var circleContainer = svg.append("g");
+
+      circleContainer.selectAll("circle")
+            .data(filtdata)
+            .enter().append("circle")
+            .attr("class", function (d) { return d.State; })
+            .attr("r", 2)
+            .attr("cx", function(d) { return x(d.RealWage); })
+            .attr("cy", function(d) { return y(d.Percent); })
+            .style("fill", "rgb(6,120,155)");
+
+    var text = circleContainer.selectAll("text")
+              .data(filtdata)
+              .enter()
+              .append("text");
+              
+    var textLabels = text
+     .attr("class", "yearlabel")
+     .attr("x", function(d) { if(d.Year == 1980){ return x(d.RealWage)+2; };})
+     .attr("y", function(d) { if(d.Year == 1980){return y(d.Percent)-2; };})
+      .style("fill", "8C8C8C")
+      .text(function(d) { if(d.Year == 1980){return d["Year"]; };});
+
+    var lineFunction = d3.svg.line()
+       .x(function (d) {
+           return x(d.RealWage);
+       })
+       .y(function (d) {
+           return y(d.Percent);
+       })
+       .interpolate("cardinal");
+                                     
+    var path =  svg.append("path")
+           .attr("d", lineFunction(filtdata))
+           .style("stroke-width", 1.5)
+           .style("stroke", "rgb(6,120,155)")
+           .style("fill", "none");
+           
+    var totalLength = path.node().getTotalLength();
+    
+    path
+      .attr("stroke-dasharray", totalLength + " " + totalLength)
+      .attr("stroke-dashoffset", totalLength)
+      .transition()
+        .delay(5000)
+        .duration(7000)
+        .ease("linear")
+        .attr("stroke-dashoffset", 0);
+      
+  
+    svg.append("text")
+        .attr("class", "statename")
+        .attr("x", -22)             
+        .attr("y", 174) 
+        .text(states[i]);
+        };
+            
+          
+};
+
+    
+        
+      </script>
+  </head>
+<body>
+  <script type="text/javascript">
+
+  d3.csv("min_wage_data7.csv", function(d){
+    if (d['Year'] > 1979 && d['State'] != "Federal" && d['State'] != "Poverty Threshold" ) {
+    d['Wage'] = +d['Wage'];
+    d['Year'] = +d['Year'];
+    d['Percent'] = +d['Percent']/100;
+    d['RealWage'] = +d['RealWage'];
+    return d;
+   };
+  }, draw);
+
+
+  </script>
+</body>
+</html>
